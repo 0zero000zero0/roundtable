@@ -17,62 +17,62 @@ def get_lights():
             'strength': main_flame_strength,
         },
         # --- 周围的火炬 ---
-        # 1. Blender: [-164.848, -179.305, 14.5924] => OpenGL: [-164.848, 14.5924, 179.305]
         {
+            # 1
             'position': [-164.848, 14.5924, 179.305],
             'color': torch_color_A,
             'strength': torch_strength_strong,
         },
-        # 2. Blender: [-164.948, -64.2643, 14.3205] => OpenGL: [-164.948, 14.3205, 64.2643]
         {
+            # 2
             'position': [-164.948, 14.3205, 64.2643],
             'color': torch_color_B,
             'strength': torch_strength_weak,
         },
-        # 3. Blender: [-161.317, 55.4458, 15.1098] => OpenGL: [-161.317, 15.1098, -55.4458]
         {
+            # 3
             'position': [-161.317, 15.1098, -55.4458],
             'color': torch_color_A,
             'strength': torch_strength_strong,
         },
-        # 4. Blender: [-170.189, 157.297, 12.0041] => OpenGL: [-170.189, 12.0041, -157.297]
         {
+            # 4
             'position': [-170.189, 12.0041, -157.297],
             'color': torch_color_B,
             'strength': torch_strength_weak,
         },
-        # 5. Blender: [-85.6, 146.7, 13.6] => OpenGL: [-85.6, 13.6, -146.7]
         {
+            # 5
             'position': [-85.6, 13.6, -146.7],
             'color': torch_color_A,
             'strength': torch_strength_strong,
         },
-        # 6. Blender: [22.2, 143, 14.03] => OpenGL: [22.2, 14.03, -143]
         {
+            # 6
             'position': [22.2, 14.03, -143],
             'color': torch_color_B,
             'strength': torch_strength_strong,
         },
-        # 7. Blender: [106.5, 157.4, 13.78] => OpenGL: [106.5, 13.78, -157.4]
         {
+            # 7
             'position': [106.5, 13.78, -157.4],
             'color': torch_color_A,
             'strength': torch_strength_weak,
         },
-        # 8. Blender: [103.4, 59.22, 15.53] => OpenGL: [103.4, 15.53, -59.22]
         {
+            # 8
             'position': [103.4, 15.53, -59.22],
             'color': torch_color_B,
             'strength': torch_strength_strong,
         },
-        # 9. Blender: [102.5, -56.44, 15.81] => OpenGL: [102.5, 15.81, 56.44]
         {
+            # 9
             'position': [102.5, 15.81, 56.44],
             'color': torch_color_A,
             'strength': torch_strength_weak,
         },
-        # 10. Blender: [105.6, -176.3, 13.05] => OpenGL: [105.6, 13.05, 176.3]
         {
+            # 10
             'position': [105.6, 13.05, 176.3],
             'color': torch_color_B,
             'strength': torch_strength_weak,

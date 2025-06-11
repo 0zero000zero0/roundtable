@@ -441,7 +441,7 @@ class App:
 
         # 7. 初始化相机和光照
         self.camera = Camera()
-        self.ambient_light = [0.001] * 3  # 环境光
+        self.ambient_light = [0.1] * 3  # 环境光
         self.lights = get_lights()
 
     # -------------------------------------------------------------------------
@@ -513,12 +513,20 @@ class App:
     def render_depth_pass(self, model_matrix):
         """执行深度渲染遍，并使用正确的面剔除设置。"""
         main_light_pos = self.lights[0]['position']
-        shadow_projection = self._create_projection_matrix(90.0, SHADOW_WIDTH / SHADOW_HEIGHT, self.near_plane, self.far_plane)
-        shadow_transforms = [ self._create_look_at_matrix(main_light_pos, main_light_pos + d, u) for d, u in [
-            (np.array([1,0,0]), np.array([0,-1,0])), (np.array([-1,0,0]), np.array([0,-1,0])),
-            (np.array([0,1,0]), np.array([0,0,1])), (np.array([0,-1,0]), np.array([0,0,-1])),
-            (np.array([0,0,1]), np.array([0,-1,0])), (np.array([0,0,-1]), np.array([0,-1,0]))
-        ]]
+        shadow_projection = self._create_projection_matrix(
+            90.0, SHADOW_WIDTH / SHADOW_HEIGHT, self.near_plane, self.far_plane
+        )
+        shadow_transforms = [
+            self._create_look_at_matrix(main_light_pos, main_light_pos + d, u)
+            for d, u in [
+                (np.array([1, 0, 0]), np.array([0, -1, 0])),
+                (np.array([-1, 0, 0]), np.array([0, -1, 0])),
+                (np.array([0, 1, 0]), np.array([0, 0, 1])),
+                (np.array([0, -1, 0]), np.array([0, 0, -1])),
+                (np.array([0, 0, 1]), np.array([0, -1, 0])),
+                (np.array([0, 0, -1]), np.array([0, -1, 0])),
+            ]
+        ]
         final_shadow_transforms = [shadow_projection @ vt for vt in shadow_transforms]
 
         gl.glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT)
@@ -531,14 +539,16 @@ class App:
 
         self.depth_shader.use()
         for i in range(6):
-            self.depth_shader.set_mat4(f"shadowMatrices[{i}]", final_shadow_transforms[i])
-        self.depth_shader.set_mat4("model", model_matrix)
-        self.depth_shader.set_vec3("lightPos", main_light_pos)
-        self.depth_shader.set_float("far_plane", self.far_plane)
+            self.depth_shader.set_mat4(
+                f'shadowMatrices[{i}]', final_shadow_transforms[i]
+            )
+        self.depth_shader.set_mat4('model', model_matrix)
+        self.depth_shader.set_vec3('lightPos', main_light_pos)
+        self.depth_shader.set_float('far_plane', self.far_plane)
 
         gl.glBindVertexArray(self.depth_vao)
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.total_vertex_count)
-
+        gl.glDisable(gl.GL_CULL_FACE)
         # 恢复默认状态，为主渲染做准备
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
 

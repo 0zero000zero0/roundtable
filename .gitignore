@@ -8,8 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
-assets/
-cache/
+assets/*
+cache/*
 prompt.md
 uv.txt
 camera.txt
