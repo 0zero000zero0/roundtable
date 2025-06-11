@@ -72,37 +72,54 @@ void main()
 // =======================================================
 //                辅助函数
 // =======================================================
-
 float CalculateShadow(vec3 fragPos, vec3 normal)
 {
-    vec3 fragToLight = fragPos - u_lightPos; // 修正
-
-    vec3 sample_offsets[] = vec3[](
-       vec3(0.38, 0.14, 0.22), vec3(0.26, -0.35, -0.19), vec3(-0.45, 0.31, 0.09),
-       vec3(0.12, 0.48, -0.34), vec3(-0.27, -0.16, 0.49), vec3(-0.08, 0.23, -0.42),
-       vec3(0.41, -0.07, 0.37), vec3(-0.15, -0.43, -0.28), vec3(0.05, -0.29, 0.47),
-       vec3(0.33, 0.46, 0.11), vec3(-0.49, 0.03, -0.36), vec3(-0.32, 0.21, 0.43),
-       vec3(0.18, -0.41, 0.25), vec3(0.44, 0.19, -0.48), vec3(-0.01, -0.04, -0.26),
-       vec3(-0.23, -0.25, 0.17)
-    );
-
+    vec3 fragToLight = fragPos - u_lightPos;
     float currentDepth = length(fragToLight);
-    float shadow = 0.0;
-    int samples = 16;
-    float bias = max(0.05 * (1.0 - dot(normal, normalize(fragToLight))), 0.005);
-    float viewDistance = length(u_viewPos - fragPos);
-    float diskRadius = (1.0 + viewDistance / u_far_plane) * 0.03; // 修正
 
-    for(int i = 0; i < samples; ++i)
-    {
-        float closestDepth_normalized = texture(u_depthMap, fragToLight + sample_offsets[i] * diskRadius).r;
-        float closestDepth_world = closestDepth_normalized * u_far_plane; // 修正
-        if(currentDepth - bias > closestDepth_world)
-            shadow += 1.0;
-    }
-    shadow /= float(samples);
-    return shadow;
+    // 使用一个小的、固定的偏移量
+    float bias = 0.05;
+
+    // 只进行一次最简单的采样
+    float closestDepth_normalized = texture(u_depthMap, fragToLight).r;
+    float closestDepth_world = closestDepth_normalized * u_far_plane;
+
+    // 如果当前片元比深度图中记录的还远，说明它在阴影里
+    if(currentDepth - bias > closestDepth_world)
+        return 1.0; // 完全在阴影中
+    else
+        return 0.0; // 完全被照亮
 }
+// float CalculateShadow(vec3 fragPos, vec3 normal)
+// {
+//     vec3 fragToLight = fragPos - u_lightPos; // 修正
+
+//     vec3 sample_offsets[] = vec3[](
+//        vec3(0.38, 0.14, 0.22), vec3(0.26, -0.35, -0.19), vec3(-0.45, 0.31, 0.09),
+//        vec3(0.12, 0.48, -0.34), vec3(-0.27, -0.16, 0.49), vec3(-0.08, 0.23, -0.42),
+//        vec3(0.41, -0.07, 0.37), vec3(-0.15, -0.43, -0.28), vec3(0.05, -0.29, 0.47),
+//        vec3(0.33, 0.46, 0.11), vec3(-0.49, 0.03, -0.36), vec3(-0.32, 0.21, 0.43),
+//        vec3(0.18, -0.41, 0.25), vec3(0.44, 0.19, -0.48), vec3(-0.01, -0.04, -0.26),
+//        vec3(-0.23, -0.25, 0.17)
+//     );
+
+//     float currentDepth = length(fragToLight);
+//     float shadow = 0.0;
+//     int samples = 16;
+//     float bias = max(0.05 * (1.0 - dot(normal, normalize(fragToLight))), 0.005);
+//     float viewDistance = length(u_viewPos - fragPos);
+//     float diskRadius = (1.0 + viewDistance / u_far_plane) * 0.03; // 修正
+
+//     for(int i = 0; i < samples; ++i)
+//     {
+//         float closestDepth_normalized = texture(u_depthMap, fragToLight + sample_offsets[i] * diskRadius).r;
+//         float closestDepth_world = closestDepth_normalized * u_far_plane; // 修正
+//         if(currentDepth - bias > closestDepth_world)
+//             shadow += 1.0;
+//     }
+//     shadow /= float(samples);
+//     return shadow;
+// }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec4 texColor, float shadow)
 {

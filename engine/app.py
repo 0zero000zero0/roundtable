@@ -163,12 +163,12 @@ class App:
             gl.glTexImage2D(
                 gl.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,  # type: ignore
                 0,
-                gl.GL_DEPTH_COMPONENT,
+                gl.GL_DEPTH_COMPONENT24,
                 SHADOW_WIDTH,
                 SHADOW_HEIGHT,
                 0,
-                gl.GL_DEPTH_COMPONENT,
-                gl.GL_FLOAT,
+                gl.GL_DEPTH_COMPONENT,  # <-- 源格式可以保持不变
+                gl.GL_FLOAT,  # <-- 源类型可以保持不变
                 None,
             )
         gl.glTexParameteri(
@@ -529,14 +529,18 @@ class App:
         ]
         final_shadow_transforms = [shadow_projection @ vt for vt in shadow_transforms]
 
+        # 1. 准备深度渲染
         gl.glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT)
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.depth_cubemap_fbo)
         gl.glClear(gl.GL_DEPTH_BUFFER_BIT)
 
-        # --- 【核心修正】在深度遍中，我们暂时完全禁用面剔除 ---
-        # 这确保了无论我们看到的是正面还是背面，都会被写入深度图
+        # 2. 设置正确的OpenGL状态
+        # 为了防止 "Peter Panning"，可以尝试 glCullFace(GL_FRONT)
+        # 但 glDisable(GL_CULL_FACE) 对于排除问题更直接
         gl.glDisable(gl.GL_CULL_FACE)
+        gl.glDepthFunc(gl.GL_LEQUAL)  # 使用LEQUAL以确保深度写入
 
+        # 3. 设置着色器和Uniforms
         self.depth_shader.use()
         for i in range(6):
             self.depth_shader.set_mat4(
@@ -546,11 +550,15 @@ class App:
         self.depth_shader.set_vec3('lightPos', main_light_pos)
         self.depth_shader.set_float('far_plane', self.far_plane)
 
+        # 4. 执行绘制
         gl.glBindVertexArray(self.depth_vao)
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.total_vertex_count)
-        gl.glDisable(gl.GL_CULL_FACE)
-        # 恢复默认状态，为主渲染做准备
+
+        # 5. 恢复OpenGL状态
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
+        gl.glDepthFunc(gl.GL_LESS)  # 恢复默认深度测试函数，为主场景渲染做准备
+        # 恢复视口大小
+        gl.glViewport(0, 0, self.width, self.height)
 
     def render_main_pass(self, projection_matrix, view_matrix, model_matrix):
         """执行主场景渲染遍"""

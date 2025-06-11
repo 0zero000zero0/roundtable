@@ -5,7 +5,7 @@ import OpenGL.GL as gl
 class Shader:
     def __init__(
         self, vertex_path, fragment_path, geometry_path=None
-    ):  # 添加 geometry_path 参数
+    ):
         """
         初始化Shader类，可以额外加载几何着色器。
         """

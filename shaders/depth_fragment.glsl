@@ -14,3 +14,12 @@ void main()
     // 2. 归一化距离并写入深度 (现在 far_plane 也有正确的值了)
     gl_FragDepth = lightDistance / far_plane;
 }
+
+// shaders/depth_fragment.glsl (用于测试1)
+// #version 330 core
+
+// void main()
+// {
+//     // 忽略所有计算，强制写入一个固定的深度值 0.5
+//     gl_FragDepth = 0.5;
+// }
