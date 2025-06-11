@@ -1,10 +1,8 @@
 // shaders/depth_fragment.glsl (已修正)
 #version 330 core
 
-// 【核心修正 1】修正输入变量名，以匹配几何着色器的输出
 in vec4 worldPos;
 
-// 【核心修正 2】修正 uniform 变量名，以匹配 app.py 中的设置
 uniform vec3 lightPos;
 uniform float far_plane;
 

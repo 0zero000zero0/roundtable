@@ -6,7 +6,6 @@ layout (triangle_strip, max_vertices = 18) out;
 
 uniform mat4 shadowMatrices[6];
 
-// 【核心修正】修正输出变量名，使其清晰并能与片元着色器匹配
 out vec4 worldPos;
 
 void main()

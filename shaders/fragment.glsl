@@ -1,30 +1,23 @@
 #version 330 core
 
-// =====================================================
-// 1. 输入/输出变量
-// =====================================================
 in vec2 v_texCoord;
 in vec3 v_normal;
 in vec3 v_fragPos;
 
 out vec4 FragColor;
 
-// =====================================================
-// 2. Uniforms
-// =====================================================
+
 uniform sampler2D u_texture;
 uniform samplerCube u_depthMap;
 
 uniform vec3 u_viewPos;
 uniform vec3 u_ambient_light;
-uniform float u_far_plane; // 修正
-uniform vec3 u_lightPos;    // 修正
+uniform float u_far_plane;
+uniform vec3 u_lightPos;
 
 uniform int u_visualize_normals;
 
-// =====================================================
-// 3. 结构体和常量
-// =====================================================
+
 struct PointLight {
     vec3 position;
     vec3 color;
@@ -36,15 +29,10 @@ struct PointLight {
 #define NUM_LIGHTS 11
 uniform PointLight u_lights[NUM_LIGHTS];
 
-// =====================================================
-// 4. 函数原型
-// =====================================================
+
 float CalculateShadow(vec3 fragPos, vec3 normal);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec4 texColor, float shadow);
 
-// =======================================================
-//                主函数 (Main)
-// =======================================================
 void main()
 {
     // --- 调试模式A：可视化深度图 ---

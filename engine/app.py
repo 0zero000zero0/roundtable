@@ -441,7 +441,7 @@ class App:
 
         # 7. 初始化相机和光照
         self.camera = Camera()
-        self.ambient_light = [0.1] * 3  # 环境光
+        self.ambient_light = [0.01] * 3  # 环境光
         self.lights = get_lights()
 
     # -------------------------------------------------------------------------
