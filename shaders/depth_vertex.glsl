@@ -1,13 +1,12 @@
 #version 330 core
-// shaders/depth_vertex.glsl
-// 接收顶点位置
+
+// 深度渲染只需要位置属性，它必须在 location = 0
 layout (location = 0) in vec3 a_position;
 
-// 模型矩阵
 uniform mat4 model;
 
-// 将世界坐标位置传递给几何着色器
 void main()
 {
+    // 将顶点变换到世界坐标，并传递给几何着色器
     gl_Position = model * vec4(a_position, 1.0);
 }
